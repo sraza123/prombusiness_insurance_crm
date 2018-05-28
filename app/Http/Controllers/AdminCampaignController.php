@@ -1,86 +1,46 @@
 <?php namespace App\Http\Controllers;
 
-	use Carbon\Carbon;
-    use Session;
+	use Session;
 	use Request;
 	use DB;
 	use CRUDBooster;
 
-	class AdminPoliciesController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminCampaignController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
 			# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->title_field = "id";
+			$this->title_field = "name";
 			$this->limit = "20";
 			$this->orderby = "id,desc";
 			$this->global_privilege = false;
 			$this->button_table_action = true;
-			$this->button_bulk_action = true;
+			$this->button_bulk_action = false;
 			$this->button_action_style = "button_icon";
 			$this->button_add = true;
 			$this->button_edit = true;
 			$this->button_delete = true;
-			$this->button_detail = true;
-			$this->button_show = true;
-			$this->button_filter = true;
-			$this->button_import = true;
-			$this->button_export = true;
-			$this->table = "policies";
+			$this->button_detail = false;
+			$this->button_show = false;
+			$this->button_filter = false;
+			$this->button_import = false;
+			$this->button_export = false;
+			$this->table = "campaign";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Policy Number","name"=>"policy_number"];
-			$this->col[] = ["label"=>"Merchant Id","name"=>"merchant_id"];
-			$this->col[] = ["label"=>"Customer","name"=>"customer_id","join"=>"customers,first_name"];
-			$this->col[] = ["label"=>"Company","name"=>"company_id","join"=>"company,name"];
-			$this->col[] = ["label"=>"Start Date","name"=>"start_date"];
-			$this->col[] = ["label"=>"End Date","name"=>"end_date"];
-			$this->col[] = ["label"=>"Renewal Date","name"=>"renewal_date"];
-			$this->col[] = ["label"=>"Policy Amount","name"=>"policy_amount"];
+			$this->col[] = ["label"=>"Name","name"=>"name"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Customer','name'=>'customer_id','type'=>'datamodal','validation'=>'required|integer','width'=>'col-sm-9','datamodal_table'=>'customers','datamodal_columns'=>'first_name,last_name,post_code,telephone,mobile,email','datamodal_size'=>'large','datamodal_module_path'=>'customers/add','datamodal_columns_alias'=>'FirstName, LastName, Post Code, Telephone, Mobile, Email'];
-			$this->form[] = ['label'=>'Start Date','name'=>'start_date','type'=>'date','validation'=>'required|string|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'End Date','name'=>'end_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Company','name'=>'company_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'company,name','datatable_where'=>'is_active = 1'];
-			$this->form[] = ['label'=>'Payment Plan','name'=>'payment_plan_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'payment_plan,plan'];
-			$this->form[] = ['label'=>'Inception Date','name'=>'inception_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Value','name'=>'value','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Payment Date','name'=>'payment_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Policy Amount','name'=>'policy_amount','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Policy Term','name'=>'policy_term','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Appliance Age','name'=>'appliance_age','type'=>'text','validation'=>'required|string|min:5|max:255','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Campaign','name'=>'campaign_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'campaign,name'];
-			$this->form[] = ['label'=>'Sale','name'=>'sale_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'sale_method,name'];
-			$this->form[] = ['label'=>'Underwriter','name'=>'underwriter_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'underwriter,name'];
-			$this->form[] = ['label'=>'Renewal Date','name'=>'renewal_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Renewal Invitation Date','name'=>'renewal_invitation_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Renewal Activity','name'=>'renewal_activity','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Name','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Customer','name'=>'customer_id','type'=>'datamodal','validation'=>'required|integer','width'=>'col-sm-9','datamodal_table'=>'customers','datamodal_columns'=>'first_name,last_name,post_code,telephone,mobile,email','datamodal_size'=>'large','datamodal_module_path'=>'customers/add','datamodal_columns_alias'=>'FirstName, LastName, Post Code, Telephone, Mobile, Email'];
-			//$this->form[] = ['label'=>'Start Date','name'=>'start_date','type'=>'date','validation'=>'required|string|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'End Date','name'=>'end_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Company','name'=>'company_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'company,name','datatable_where'=>'is_active = 1'];
-			//$this->form[] = ['label'=>'Payment Plan','name'=>'payment_plan_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'payment_plan,plan'];
-			//$this->form[] = ['label'=>'Inception Date','name'=>'inception_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Value','name'=>'value','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Payment Date','name'=>'payment_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Policy Amount','name'=>'policy_amount','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Policy Term','name'=>'policy_term','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Appliance Age','name'=>'appliance_age','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Campaign','name'=>'campaign_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'campaign,name'];
-			//$this->form[] = ['label'=>'Sale','name'=>'sale_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'sale_method,name'];
-			//$this->form[] = ['label'=>'Underwriter','name'=>'underwriter_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'underwriter,name'];
-			//$this->form[] = ['label'=>'Renewal Date','name'=>'renewal_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Renewal Invitation Date','name'=>'renewal_invitation_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Renewal Activity','name'=>'renewal_activity','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
+			//$this->form[] = ['label'=>'Name','name'=>'name','type'=>'text','validation'=>'required|string|min:3|max:70','width'=>'col-sm-10','placeholder'=>'You can only enter the letter only'];
 			# OLD END FORM
 
 			/* 
@@ -95,8 +55,8 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-	        //$this->sub_module = array();
-            $this->sub_module[] = ['label'=>'Claims','path'=>'claims','parent_columns'=>'policy_number,merchant_id,start_date,end_date,policy_amount','foreign_key'=>'policy_id','button_color'=>'primary','button_icon'=>'fa fa-bars'];
+	        $this->sub_module = array();
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -109,7 +69,8 @@
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-            $this->addaction[] = ['label'=>'Run Manual EPQ','url'=>CRUDBooster::mainpath('run-epq/[id]'),'icon'=>'fa fa-ban','color'=>'warning','confirmation' => true];
+	        $this->addaction = array();
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -179,7 +140,7 @@
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = "";
+	        $this->script_js = NULL;
 
 
             /*
@@ -214,7 +175,7 @@
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-	        $this->load_js = array(asset("js/policy.js"));
+	        $this->load_js = array();
 	        
 	        
 	        
@@ -267,7 +228,8 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-        }
+	            
+	    }
 
 	    /*
 	    | ---------------------------------------------------------------------- 
@@ -286,23 +248,9 @@
 	    | @arr
 	    |
 	    */
-	    public function hook_before_add(&$postdata) {
+	    public function hook_before_add(&$postdata) {        
+	        //Your code here
 
-            $dt = Carbon::now();
-            $dt = $dt->format('Ymd');
-
-            $policyNumber = $dt;
-	        $numberOfPolicies = DB::table('policies')
-                ->whereRaw(DB::raw('DATE(TIMESTAMPADD(HOUR, 4, created_at))'),DB::raw('DATE(TIMESTAMPADD(HOUR, 4, NOW()))'))
-                ->min('id');
-
-            $policyNumber .= sprintf('%06d', $numberOfPolicies == null ? 1 : $numberOfPolicies+1);
-            $policyNumber .= 'PB';
-
-            $postdata['policy_number'] = $policyNumber;
-            $postdata['merchant_id'] = $policyNumber;
-            $postdata['certificate_number'] = $policyNumber;
-            $postdata['created_by'] = CRUDBooster::myId();
 	    }
 
 	    /* 
@@ -367,9 +315,6 @@
 	    }
 
 
-	    public function runEPQ($id) {
-
-        }
 
 	    //By the way, you can still create your own method in here... :) 
 

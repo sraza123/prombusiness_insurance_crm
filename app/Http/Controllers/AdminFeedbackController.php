@@ -1,12 +1,11 @@
 <?php namespace App\Http\Controllers;
 
-	use Carbon\Carbon;
-    use Session;
+	use Session;
 	use Request;
 	use DB;
 	use CRUDBooster;
 
-	class AdminPoliciesController extends \crocodicstudio\crudbooster\controllers\CBController {
+	class AdminFeedbackController extends \crocodicstudio\crudbooster\controllers\CBController {
 
 	    public function cbInit() {
 
@@ -24,63 +23,34 @@
 			$this->button_detail = true;
 			$this->button_show = true;
 			$this->button_filter = true;
-			$this->button_import = true;
-			$this->button_export = true;
-			$this->table = "policies";
+			$this->button_import = false;
+			$this->button_export = false;
+			$this->table = "feedback";
 			# END CONFIGURATION DO NOT REMOVE THIS LINE
 
 			# START COLUMNS DO NOT REMOVE THIS LINE
 			$this->col = [];
-			$this->col[] = ["label"=>"Policy Number","name"=>"policy_number"];
-			$this->col[] = ["label"=>"Merchant Id","name"=>"merchant_id"];
-			$this->col[] = ["label"=>"Customer","name"=>"customer_id","join"=>"customers,first_name"];
-			$this->col[] = ["label"=>"Company","name"=>"company_id","join"=>"company,name"];
-			$this->col[] = ["label"=>"Start Date","name"=>"start_date"];
-			$this->col[] = ["label"=>"End Date","name"=>"end_date"];
-			$this->col[] = ["label"=>"Renewal Date","name"=>"renewal_date"];
-			$this->col[] = ["label"=>"Policy Amount","name"=>"policy_amount"];
+			$this->col[] = ["label"=>"Claim Id","name"=>"claim_id","join"=>"claims,claim_number"];
+			$this->col[] = ["label"=>"Feedback Date","name"=>"feedback_date"];
+			$this->col[] = ["label"=>"Feedback Reasons","name"=>"feedback_reasons"];
 			# END COLUMNS DO NOT REMOVE THIS LINE
 
 			# START FORM DO NOT REMOVE THIS LINE
 			$this->form = [];
-			$this->form[] = ['label'=>'Customer','name'=>'customer_id','type'=>'datamodal','validation'=>'required|integer','width'=>'col-sm-9','datamodal_table'=>'customers','datamodal_columns'=>'first_name,last_name,post_code,telephone,mobile,email','datamodal_size'=>'large','datamodal_module_path'=>'customers/add','datamodal_columns_alias'=>'FirstName, LastName, Post Code, Telephone, Mobile, Email'];
-			$this->form[] = ['label'=>'Start Date','name'=>'start_date','type'=>'date','validation'=>'required|string|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'End Date','name'=>'end_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Company','name'=>'company_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'company,name','datatable_where'=>'is_active = 1'];
-			$this->form[] = ['label'=>'Payment Plan','name'=>'payment_plan_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'payment_plan,plan'];
-			$this->form[] = ['label'=>'Inception Date','name'=>'inception_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Value','name'=>'value','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Payment Date','name'=>'payment_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Policy Amount','name'=>'policy_amount','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Policy Term','name'=>'policy_term','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Appliance Age','name'=>'appliance_age','type'=>'text','validation'=>'required|string|min:5|max:255','width'=>'col-sm-5'];
-			$this->form[] = ['label'=>'Campaign','name'=>'campaign_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'campaign,name'];
-			$this->form[] = ['label'=>'Sale','name'=>'sale_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'sale_method,name'];
-			$this->form[] = ['label'=>'Underwriter','name'=>'underwriter_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'underwriter,name'];
-			$this->form[] = ['label'=>'Renewal Date','name'=>'renewal_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Renewal Invitation Date','name'=>'renewal_invitation_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			$this->form[] = ['label'=>'Renewal Activity','name'=>'renewal_activity','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Claim Id','name'=>'claim_id','type'=>'datamodal','validation'=>'required|integer|min:0','width'=>'col-sm-10','datamodal_table'=>'claims','datamodal_columns'=>'claim_number,job_type,claim_status,claim_notes','datamodal_size'=>'large'];
+			$this->form[] = ['label'=>'Feedback Date','name'=>'feedback_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Feedback Reasons','name'=>'feedback_reasons','type'=>'select','validation'=>'required|min:1|max:255','width'=>'col-sm-10','dataenum'=>'Customer Happy With Service;Customer Unhappy With Service'];
+			$this->form[] = ['label'=>'Feedback Notes','name'=>'feedback_notes','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
+			$this->form[] = ['label'=>'Comments','name'=>'comments','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
 			# END FORM DO NOT REMOVE THIS LINE
 
 			# OLD START FORM
 			//$this->form = [];
-			//$this->form[] = ['label'=>'Customer','name'=>'customer_id','type'=>'datamodal','validation'=>'required|integer','width'=>'col-sm-9','datamodal_table'=>'customers','datamodal_columns'=>'first_name,last_name,post_code,telephone,mobile,email','datamodal_size'=>'large','datamodal_module_path'=>'customers/add','datamodal_columns_alias'=>'FirstName, LastName, Post Code, Telephone, Mobile, Email'];
-			//$this->form[] = ['label'=>'Start Date','name'=>'start_date','type'=>'date','validation'=>'required|string|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'End Date','name'=>'end_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Company','name'=>'company_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'company,name','datatable_where'=>'is_active = 1'];
-			//$this->form[] = ['label'=>'Payment Plan','name'=>'payment_plan_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'payment_plan,plan'];
-			//$this->form[] = ['label'=>'Inception Date','name'=>'inception_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Value','name'=>'value','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Payment Date','name'=>'payment_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Policy Amount','name'=>'policy_amount','type'=>'money','validation'=>'required','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Policy Term','name'=>'policy_term','type'=>'text','validation'=>'required|min:5|max:255','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Appliance Age','name'=>'appliance_age','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Campaign','name'=>'campaign_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'campaign,name'];
-			//$this->form[] = ['label'=>'Sale','name'=>'sale_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'sale_method,name'];
-			//$this->form[] = ['label'=>'Underwriter','name'=>'underwriter_id','type'=>'select','validation'=>'required|integer','width'=>'col-sm-10','datatable'=>'underwriter,name'];
-			//$this->form[] = ['label'=>'Renewal Date','name'=>'renewal_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Renewal Invitation Date','name'=>'renewal_invitation_date','type'=>'date','validation'=>'required|date','width'=>'col-sm-10'];
-			//$this->form[] = ['label'=>'Renewal Activity','name'=>'renewal_activity','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
+			//$this->form[] = ["label"=>"Claim Id","name"=>"claim_id","type"=>"select2","required"=>TRUE,"validation"=>"required|integer|min:0","datatable"=>"claim,id"];
+			//$this->form[] = ["label"=>"Feedback Date","name"=>"feedback_date","type"=>"date","required"=>TRUE,"validation"=>"required|date"];
+			//$this->form[] = ["label"=>"Feedback Reasons","name"=>"feedback_reasons","type"=>"text","required"=>TRUE,"validation"=>"required|min:1|max:255"];
+			//$this->form[] = ["label"=>"Feedback Notes","name"=>"feedback_notes","type"=>"textarea","required"=>TRUE,"validation"=>"required|string|min:5|max:5000"];
+			//$this->form[] = ["label"=>"Comments","name"=>"comments","type"=>"textarea","required"=>TRUE,"validation"=>"required|string|min:5|max:5000"];
 			# OLD END FORM
 
 			/* 
@@ -95,8 +65,8 @@
 			| @parent_columns = Sparate with comma, e.g : name,created_at
 	        | 
 	        */
-	        //$this->sub_module = array();
-            $this->sub_module[] = ['label'=>'Claims','path'=>'claims','parent_columns'=>'policy_number,merchant_id,start_date,end_date,policy_amount','foreign_key'=>'policy_id','button_color'=>'primary','button_icon'=>'fa fa-bars'];
+	        $this->sub_module = array();
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -109,7 +79,8 @@
 	        | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 	        | 
 	        */
-            $this->addaction[] = ['label'=>'Run Manual EPQ','url'=>CRUDBooster::mainpath('run-epq/[id]'),'icon'=>'fa fa-ban','color'=>'warning','confirmation' => true];
+	        $this->addaction = array();
+
 
 	        /* 
 	        | ---------------------------------------------------------------------- 
@@ -179,7 +150,7 @@
 	        | $this->script_js = "function() { ... }";
 	        |
 	        */
-	        $this->script_js = "";
+	        $this->script_js = NULL;
 
 
             /*
@@ -214,7 +185,7 @@
 	        | $this->load_js[] = asset("myfile.js");
 	        |
 	        */
-	        $this->load_js = array(asset("js/policy.js"));
+	        $this->load_js = array();
 	        
 	        
 	        
@@ -267,7 +238,8 @@
 	    */
 	    public function hook_query_index(&$query) {
 	        //Your code here
-        }
+	            
+	    }
 
 	    /*
 	    | ---------------------------------------------------------------------- 
@@ -287,21 +259,6 @@
 	    |
 	    */
 	    public function hook_before_add(&$postdata) {
-
-            $dt = Carbon::now();
-            $dt = $dt->format('Ymd');
-
-            $policyNumber = $dt;
-	        $numberOfPolicies = DB::table('policies')
-                ->whereRaw(DB::raw('DATE(TIMESTAMPADD(HOUR, 4, created_at))'),DB::raw('DATE(TIMESTAMPADD(HOUR, 4, NOW()))'))
-                ->min('id');
-
-            $policyNumber .= sprintf('%06d', $numberOfPolicies == null ? 1 : $numberOfPolicies+1);
-            $policyNumber .= 'PB';
-
-            $postdata['policy_number'] = $policyNumber;
-            $postdata['merchant_id'] = $policyNumber;
-            $postdata['certificate_number'] = $policyNumber;
             $postdata['created_by'] = CRUDBooster::myId();
 	    }
 
@@ -325,8 +282,8 @@
 	    | @id       = current id 
 	    | 
 	    */
-	    public function hook_before_edit(&$postdata,$id) {        
-	        //Your code here
+	    public function hook_before_edit(&$postdata,$id) {
+            $postdata['updated_by'] = CRUDBooster::myId();
 
 	    }
 
@@ -367,9 +324,6 @@
 	    }
 
 
-	    public function runEPQ($id) {
-
-        }
 
 	    //By the way, you can still create your own method in here... :) 
 
